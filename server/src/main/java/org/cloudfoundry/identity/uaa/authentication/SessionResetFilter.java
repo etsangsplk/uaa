@@ -53,7 +53,9 @@ public class SessionResetFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         SecurityContext context = SecurityContextHolder.getContext();
         UaaAuthentication authentication = getUaaAuthentication(context);
         if (authentication != null) {
@@ -65,7 +67,12 @@ public class SessionResetFilter extends OncePerRequestFilter {
                     logger.debug("Evaluating user-id for session reset:"+userId);
                     UaaUser uaaUser = userDatabase.retrieveUserById(userId);
                     if (passwordModifiedAfterLastAuthentication(uaaUser, authentication)) {
-                        logger.debug(String.format("Resetting user session for user ID: %s Auth Time: %s Password Change Time: %s", uaaUser.getId(), authentication.getAuthenticatedTime(), uaaUser.getPasswordLastModified().getTime()));
+                        logger.debug(
+                                String.format("Resetting user session for user ID: %s Auth Time: %s Password Change Time: %s",
+                                        uaaUser.getId(),
+                                        authentication.getAuthenticatedTime(),
+                                        uaaUser.getPasswordLastModified().getTime())
+                        );
                         redirect = true;
                     }
                 } catch (UsernameNotFoundException x) {
